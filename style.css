@@ -35,6 +35,7 @@ html, body {
   width: 50%;
   height: calc(100% + 50px);
   background-color: #19191910;
+  overflow-y: scroll;
 }
 
 .container .log span.title {
@@ -44,6 +45,7 @@ html, body {
   background: #191919;
   padding: 3px 5px;
   color: #f2f2f2;
+  z-index: 1;
 }
 
 .container .log span#log {
@@ -52,6 +54,7 @@ html, body {
   position: relative;
   font-size: 10px;
   left: 5px;
+  z-index: 0;
 }
 
 .container .inputs {
