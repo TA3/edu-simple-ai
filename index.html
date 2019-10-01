@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css">
+    <script src="./browser.js"></script>
+    <script src="./dataset.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Student Overall</h2>
+        <div class="inputs" >
+            <input id="PR" type="number" placeholder="PR" class="score" max="100" min="0">
+            <input id="PW" type="number" placeholder="PW" class="score" max="100" min="0">
+            <input id="PS" type="number" placeholder="PS" class="score" max="100" min="0">
+            <input id="PL" type="number" placeholder="PL" class="score" max="100" min="0">
+            <input id="Att" type="number" placeholder="Att" class="score" max="100" min="0">
+        </div>
+        <button onclick="estimate()" class="estimate">Estimate</button>
+        <div class="result">Expected: <span id="result">--</span>%</div>
+        <div class="log">
+                <span class="title">Log data</span>
+                <span id="log">[!] Preparing neural network...</span>
+            </div>
+    </div>
+
+
+    <script>
+
+
+
+
+
+// create a simple feed forward neural network with backpropagation
+
+
+//const output = net.run([1, 1,1,1,1]);  // [0.987]
+
+
+function log(txt, success){
+    var type;
+    if (success) {
+        type = "[ok]"
+    } else {
+        type = "[!]"
+    }
+    document.getElementById('log').innerText += " \n " + type + " " + txt;
+}
+//
+
+
+log('Preparing Dataset....');
+var trainingData = [];
+dataset.forEach(function(e){
+	trainingData.push({input:[e.Attendance, e.PL, e.PR,e.PS,e.PW],output:[e.Final]})
+})
+log('Dataset Ready....', true);
+log('Preparing Config....');
+
+        // provide optional config object (or undefined). Defaults shown.
+        const config = {
+    binaryThresh: 0.5,
+    hiddenLayers: [3],     // array of ints for the sizes of the hidden layers in the network
+    activation: 'sigmoid',  // supported activation types: ['sigmoid', 'relu', 'leaky-relu', 'tanh'],
+    leakyReluAlpha: 0.01   // supported for activation type 'leaky-relu'
+};
+log('Config Ready....', true);
+log('Preparing Neural Network....');
+const net = new brain.NeuralNetwork(config);
+log('Neural Network Ready....');
+
+log('Training Neural Network....');
+var training = net.train(trainingData);
+log('Training error: ' + training.error);
+log('Trained and Ready...', true);
+var result;
+function estimate(){
+    log('Calculating...');
+   result = net.run([document.getElementById('Att').value/100,document.getElementById('PL').value/100,document.getElementById('PR').value/100,document.getElementById('PS').value/100,document.getElementById('PW').value/100]);
+    document.getElementById("result").innerHTML = result[0]*100;
+    log('Calculated value: ' + result, true);
+    log('Ready for another calculation...', true);
+}
+    </script>
+</body>
+</html>
+
