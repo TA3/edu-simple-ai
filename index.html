@@ -47,7 +47,9 @@ function log(txt, success){
     } else {
         type = "[!]"
     }
-    document.getElementById('log').innerText += " \n " + type + " " + txt;
+    var logBox = document.getElementById('log');
+    logBox.innerText += " \n " + type + " " + txt;
+    logBox.scrollTop = logBox.scrollHeight - logBox.clientHeight;
 }
 //
 
