@@ -25,6 +25,16 @@
                 <span class="title">Log data</span>
                 <span id="log">[!] Preparing neural network...</span>
             </div>
+
+        <h2>Batch test</h2>
+        <div class="inputs" >
+            <input id="against" type="text" placeholder="Att" class="score" >
+            <input id="interval" type="number" placeholder="Interval" class="score" max="100" min="0">
+            <input id="value" type="number" placeholder="Value" class="score" max="100" min="0">
+            <label for="downloadCSV">Download CSV?</label>
+            <input name="downloadCSV" id="downloadCSV" type="checkbox" checked='true' class="score">
+        </div>
+        <button onclick="batchTest(document.getElementById('against').value,parseInt(document.getElementById('interval').value),parseInt(document.getElementById('value').value),document.getElementById('downloadCSV').checked)" class="estimate">Batch Run</button>
     </div>
 
 
@@ -86,19 +96,69 @@ function estimate(){
     log('Calculated value: ' + result, true);
     log('Ready for another calculation...', true);
 }
-function batchTest(against, interval, value){
+
+function batchTest(against, interval, value, downloadCSV){
     var result = [];
-    switch (against) {
-        case 'att':
-            for (let i = 1; i <= 100; i = i + interval) {
-                result.push(net.run([i, value,value,value,value]));
-            }
-            break;
-    
-        default:
-            break;
+    var testCase;
+    for (let i = 0; i <= 100; i = i + interval) {
+        switch (against) {
+            case 'Att':
+                    testCase = [i/100, value/100,value/100,value/100,value/100];
+                break;
+            case 'PR':
+                    testCase = [value/100,value/100,i/100,value/100,value/100];
+                break;
+            case 'PW':
+                    testCase = [value/100,value/100,value/100,value/100,i/100];
+                break;
+            case 'PL':
+                    testCase = [value/100,i/100,value/100,value/100,value/100];
+                break;
+            case 'PS':
+                    testCase = [value/100,value/100,value/100,i/100,value/100];
+                break;
+            default:
+                console.log("use one of the following against [Att, PR, PW, PL, or PS].");
+                break;
+        }
+        result.push({
+            value: i,
+            estimate: net.run(testCase)[0]
+        });
     }
+    if(downloadCSV){
+        ConvertToCSV(result, against+'-'+interval+'-'+value+'.csv');
+    }
+    return result
 }
+
+function ConvertToCSV(objArray, filename) {
+            var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+            var str = '';
+
+            for (var i = 0; i < array.length; i++) {
+                var line = '';
+                for (var index in array[i]) {
+                    if (line != '') line += ','
+
+                    line += array[i][index];
+                }
+
+                str += line + '\r\n';
+            }
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(str));
+            element.setAttribute('download', filename);
+
+            element.style.display = 'none';
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
+}
+
+
     </script>
 </body>
 </html>
