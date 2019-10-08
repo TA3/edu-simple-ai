@@ -86,6 +86,19 @@ function estimate(){
     log('Calculated value: ' + result, true);
     log('Ready for another calculation...', true);
 }
+function batchTest(against, interval, value){
+    var result = [];
+    switch (against) {
+        case 'att':
+            for (let i = 1; i <= 100; i = i + interval) {
+                result.push(net.run([i, value,value,value,value]));
+            }
+            break;
+    
+        default:
+            break;
+    }
+}
     </script>
 </body>
 </html>
