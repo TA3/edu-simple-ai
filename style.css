@@ -20,6 +20,10 @@ html, body {
           justify-content: center;
 }
 
+.container .svg {
+  max-width: 80vw;
+}
+
 .container .estimate {
   width: 40%;
   height: 70px;
